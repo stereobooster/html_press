@@ -1,23 +1,14 @@
 #html_press
 
-## Alternatives
+## how it works
 
-###Ruby
+Remove all whitespace junk. Leave only HTML
 
-  - https://github.com/completelynovel/html_compressor
-  - https://github.com/MadRabbit/frontcompiler
-
-###Other
-
-  - http://code.google.com/p/htmlcompressor/
-  - smarty `strip` tag
-  - W3 total cache (WP plugin from smashingmagazine contains html minifier)
-
-## TODO
-
-  - bin
-  - Support other minifiers (Closure, YUI compressor)
-  - htmlTydi
+```
+1.               ┌――――――――――――――――――╖        2.         ┌――――――――――――――――――╖
+  ●――――――――――――――├―╢ <html> ws junk ║          ●――――――――├―――――――――╢ <html> ║
+                 └――――――――――――――――――╜                   └――――――――――――――――――╜
+```
 
 ## Usage
 
@@ -62,5 +53,24 @@ Run
 
 ```
 bundle install
-bundle exec jelyll
+bundle exec jekyll
 ```
+
+## Alternatives
+
+###Ruby
+
+  - https://github.com/completelynovel/html_compressor
+  - https://github.com/MadRabbit/frontcompiler
+
+###Other
+
+  - http://code.google.com/p/htmlcompressor/
+  - smarty `strip` tag
+  - W3 total cache (WP plugin from smashingmagazine contains html minifier)
+
+## TODO
+
+  - bin
+  - Support other minifiers (Closure, YUI compressor)
+  - htmlTydi
