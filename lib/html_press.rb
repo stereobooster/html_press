@@ -4,7 +4,7 @@ require "html_press/uglifier"
 require "html_press/html"
 
 module HtmlPress
-    def self.compress(text)
-      self::Html.new.compile text
+    def self.compress(text, options = nil)
+      self::Html.new(options).compile text
     end
 end

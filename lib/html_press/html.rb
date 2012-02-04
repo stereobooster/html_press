@@ -1,8 +1,14 @@
 module HtmlPress
   class Html
 
-    def self.compress text
-      Html.new.compile text
+    def initialize (options = nil)
+      @options = options
+    end
+
+    def log (text)
+      if !@options.nil? && @options[:logger]
+        @options[:logger].warn text
+      end
     end
 
     def compile (html)
@@ -13,6 +19,15 @@ module HtmlPress
       @placeholders = []
       @strip_crlf = false
 
+      # IE conditional comments
+      out.gsub! /\s*(<!--\[[^\]]+\]>[\s\S]*?<!\[[^\]]+\]-->)\s*/ do |m|
+        m.gsub!(/^\s+|\s+$/, '')
+        comment = m.gsub(/\s*<!--\[[^\]]+\]>([\s\S]*?)<!\[[^\]]+\]-->\s*/, "\\1")
+        comment_compressed = Html.new.compile(comment)
+        m.gsub!(comment, comment_compressed)
+        reserve m
+      end
+
       # replace SCRIPTs (and minify) with placeholders
       out.gsub! /\s*(<script\b[^>]*?>[\s\S]*?<\/script>)\s*/i do |m|
         m.gsub!(/^\s+|\s+$/, '')
@@ -21,7 +36,7 @@ module HtmlPress
           js_compressed = HtmlPress.js_compressor js
           m.gsub!(js, js_compressed)
         rescue Exception => e
-          # p e.message
+          log e.message
         end
         reserve m
       end
@@ -34,17 +49,8 @@ module HtmlPress
           css_compressed = HtmlPress.css_compressor css
           m.gsub!(css, css_compressed)
         rescue Exception => e
-          # p e.message
+          log e.message
         end
-        reserve m
-      end
-
-      # IE conditional comments
-      out.gsub! /\s*(<!--\[[^\]]+\]>[\s\S]*?<!\[[^\]]+\]-->)\s*/ do |m|
-        m.gsub!(/^\s+|\s+$/, '')
-        comment = m.gsub(/\s*<!--\[[^\]]+\]>([\s\S]*?)<!\[[^\]]+\]-->\s*/, "\\1")
-        comment_compressed = Html.new.compile(comment)
-        m.gsub!(comment, comment_compressed)
         reserve m
       end
 
@@ -72,7 +78,7 @@ module HtmlPress
 
       re = '\\s+(<\\/?(?:area|base(?:font)?|blockquote|body' +
         '|caption|center|cite|col(?:group)?|dd|dir|div|dl|dt|fieldset|form' +
-        '|frame(?:set)?|h[1-6]|head|hr|out|legend|li|link|map|menu|meta' +
+        '|frame(?:set)?|h[1-6]|head|hr|html|legend|li|link|map|menu|meta' +
         '|ol|opt(?:group|ion)|p|param|t(?:able|body|head|d|h|r|foot|itle)' +
         '|ul)\\b[^>]*>)'
 
@@ -122,13 +128,13 @@ module HtmlPress
       end
       
       if attributes.size > 0
-        attributes_compressed = attributes.gsub(/\s*([a-z\-_]+(="[^"]*")?(='[^']*')?)\s*/i, " \\1")
+        attributes_compressed = attributes.gsub(/\s*([a-z\-_:]+(="[^"]*")?(='[^']*')?)\s*/i, " \\1")
   
-        attributes_compressed.gsub! /([a-z\-_]+="[^"]*")/ do |k|
+        attributes_compressed.gsub! /([a-z\-_:]+="[^"]*")/i do |k|
           attr k, "\"", tag
         end
   
-        attributes_compressed.gsub! /([a-z\-_]+='[^']*')/ do |k|
+        attributes_compressed.gsub! /([a-z\-_:]+='[^']*')/i do |k|
           attr k, "'", tag
         end
   
@@ -139,7 +145,7 @@ module HtmlPress
     end
 
     def attr(attribute, delimiter, tag)
-      re = "([a-z\\-_]+)(=" + delimiter + "[^" + delimiter + "]*" + delimiter + ")?"
+      re = "([a-z\\-_:]+)(=" + delimiter + "[^" + delimiter + "]*" + delimiter + ")?"
       re = Regexp.new re
       value = attribute.gsub(re, "\\2")
 

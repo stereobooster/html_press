@@ -2,6 +2,16 @@
 
 require_relative "../lib/html_press"
 
+class Lg
+  attr_accessor :warns
+  def initialize
+    @warns = []
+  end
+  def warn text
+    @warns.push text
+  end
+end
+
 describe HtmlPress do
   before :each do
   end
@@ -12,6 +22,7 @@ describe HtmlPress do
 
   it "should leave no whitespaces between block tags" do
     HtmlPress.compress("<div></div> \t\r\n  <div></div>").should eql "<div></div><div></div>"
+    HtmlPress.compress("<div>  <div> \t\r\n  </div>  </div>").should eql "<div><div></div></div>"
   end
 
   it "should leave only one whitespace in text" do
@@ -80,6 +91,11 @@ describe HtmlPress do
     text = "<!--[if IE]>" + text + "<![endif]-->"
     text2 = "<!--[if IE]>" + text2 + "<![endif]-->"
     HtmlPress.compress(text).should eql text2
+    text = "<script> (function(undefined){ var a;}()) </script>"
+    text2 = HtmlPress.compress(text)
+    text = "<!--[if IE]>" + text + "<![endif]-->"
+    text2 = "<!--[if IE]>" + text2 + "<![endif]-->"
+    HtmlPress.compress(text).should eql text2
   end
 
   it "should remove unnecessary whitespaces in html attributes (class)" do
@@ -91,6 +107,25 @@ describe HtmlPress do
     HtmlPress.compress("<p style=\"display: none;\"></p>").should eql "<p style=\"display:none;\"></p>"
   end
 
+  it "should work with namespaces" do
+    text = "<html xmlns:og=\"http://ogp.me/ns#\" class=\"a b\"><og:like>like</og:like></html>"
+    HtmlPress.compress(text).should eql text
+  end
+
+  it "should not modify input value" do
+    text = "<div> </div>"
+    text1 = text + ""
+    HtmlPress.compress(text)
+    text.should eql text1
+  end
+  
+  it "should not modify input value" do
+    script_with_error = "<script>function(){</script>"
+    l = Lg.new
+    l.warns.size.should eql 0
+    HtmlPress.compress(script_with_error, {:logger => l}).should eql script_with_error
+    l.warns.size.should eql 1
+  end
   # it "should remove unnecessary attributes" do
     # HtmlPress.compress("<script type=\"text/javascript\">var a;</script>").should eql "<script>var a;</script>"
   # end
