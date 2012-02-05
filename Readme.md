@@ -26,11 +26,23 @@ _plugins/strip_tag.rb
 ```ruby
 module Jekyll
   class StripTag < Liquid::Block
+    @total_economy = 0
+    class << self 
+      attr_accessor :total_economy
+    end 
+
     begin
       require 'html_press'
       def render(context)
         text = super
-        HtmlPress.compress text
+        before = text.bytesize
+        text = HtmlPress.compress text
+        after = text.bytesize
+
+        self.class.total_economy += before - after
+        economy = (self.class.total_economy.to_f / 1024).round(2)
+        p 'totally saved: ' + economy.to_s + ' Kb'
+        text
       end
     rescue LoadError => e
       p "Unable to load 'html_press'"
@@ -74,3 +86,5 @@ bundle exec jekyll
   - bin
   - Support other minifiers (Closure, YUI compressor)
   - htmlTydi
+  - add examples of usage with Sinatra and Rails
+  
