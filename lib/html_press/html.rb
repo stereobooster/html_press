@@ -138,6 +138,11 @@ module HtmlPress
           attr k, "'", tag
         end
   
+        if attributes_compressed == " /"
+          attributes_compressed = "/"
+        elsif attributes_compressed == " "
+          attributes_compressed = ""
+        end
         return m.gsub(attributes, attributes_compressed)
       end
 
@@ -147,37 +152,70 @@ module HtmlPress
     def attr(attribute, delimiter, tag)
       re = "([a-z\\-_:]+)(=" + delimiter + "[^" + delimiter + "]*" + delimiter + ")?"
       re = Regexp.new re
-      value = attribute.gsub(re, "\\2")
+      value_original = attribute.gsub(re, "\\2")
+      value = value_original.downcase
+      name_original = attribute.gsub(re, "\\1")
+      name = name_original.downcase
+      tag_name = tag.downcase
 
-      if tag == "script"
-        name = attribute.gsub(re, "\\1")
+      case tag_name
+      when "script"
         if name == "type" || name == "language"
           return ""
+        elsif name == "async" || name == "defer"
+          return name_original
+        end
+      when "form"
+        if name == "method" && (value == "=\"get\"" || value == "='get'")
+          return ""
+        end
+      when /link|style/
+        if name == "type"
+          return ""
+        end
+      when /input|textarea|button|select|option|optgroup/
+        if name == "disabled"
+          return name_original
+        end
+        if (tag_name == "input" || tag_name == "textarea") && name == "readonly"
+          return name_original
+        end
+        if tag_name == "option" && name == "selected"
+          return name_original
+        end
+        if tag_name == "input"
+          if name == "type" && (value == "=\"text\"" || value == "='text'")
+            return ""
+          end
+          if name == "checked"
+            return name_original
+          end
+          # if name == "value" && (value == "=\"\"" || value == "=''")
+            # return ''
+          # end
         end
       end
 
       if value.size != 0
 
-        name = attribute.gsub(re, "\\1")
-
         re = "^=" + delimiter + "|" + delimiter + "$"
         re = Regexp.new re
-        value.gsub!(re, "")
+        value_original.gsub!(re, "")
 
         if name == "style"
-          value = HtmlPress.css_compressor value
+          value_original = HtmlPress.css_compressor value_original
         end
 
         if name == "class"
-          value.gsub!(/\s+/, " ")
-          value.gsub!(/^\s+|\s+$/, "")
+          value_original.gsub!(/\s+/, " ")
+          value_original.gsub!(/^\s+|\s+$/, "")
         end
 
         # if name == "onclick"
           # value = HtmlPress.js_compressor value
         # end
 
-        attribute = name + "=" + delimiter + value + delimiter
+        attribute = name_original + "=" + delimiter + value_original + delimiter
       end
 
       attribute

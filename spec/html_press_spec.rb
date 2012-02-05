@@ -62,15 +62,6 @@ describe HtmlPress do
     HtmlPress.compress(text).should eql text
   end
 
-  it "should remove unnecessary whitespaces between attributes" do
-    HtmlPress.compress("<p class=\"a\"   id=\"b\"></p>").should eql "<p class=\"a\" id=\"b\"></p>"
-  end
-
-  it "should leave whitespaces everywhere else" do
-    text = "<a onclick=\"alert('     ')\" unknown_attr='   a  a'>a</a>"
-    HtmlPress.compress(text).should eql text
-  end
-
   it "should work with special utf-8 symbols" do
     HtmlPress.compress("✪<p></p>  <p></p>").should eql "✪<p></p><p></p>"
   end
@@ -98,12 +89,25 @@ describe HtmlPress do
     HtmlPress.compress(text).should eql text2
   end
 
-  it "should remove unnecessary whitespaces in html attributes (class)" do
-    HtmlPress.compress("<p class=\"a  b\"></p>").should eql "<p class=\"a b\"></p>"
-    HtmlPress.compress("<p class='a  b'></p>").should eql "<p class='a b'></p>"
+  it "should remove unnecessary whitespaces inside tag" do
+    HtmlPress.compress("<p class=\"a\"   id=\"b\"></p>").should eql "<p class=\"a\" id=\"b\"></p>"
+    HtmlPress.compress("<p class=\"a\" ></p>").should eql "<p class=\"a\"></p>"
+    HtmlPress.compress("<img src=\"\" />").should eql "<img src=\"\"/>"
+    HtmlPress.compress("<br />").should eql "<br/>"
   end
 
-  it "should remove unnecessary whitespaces in html attributes (style)" do
+  it "should work with 'badly' formatted attributes" do
+    HtmlPress.compress("<p class='a'   id='b'></p>").should eql "<p class='a' id='b'></p>"
+    # HtmlPress.compress("<p class = 'a'></p>").should eql "<p class='a'></p>"
+    # HtmlPress.compress("<p class = a></p>").should eql "<p class=a></p>"
+  end
+
+  it "should optimize attributes" do
+    HtmlPress.compress("<p class=\"a  b\"></p>").should eql "<p class=\"a b\"></p>"
+    # http(s):// to //
+  end
+
+  it "should compress css in style attributes" do
     HtmlPress.compress("<p style=\"display: none;\"></p>").should eql "<p style=\"display:none;\"></p>"
   end
 
@@ -118,16 +122,79 @@ describe HtmlPress do
     HtmlPress.compress(text)
     text.should eql text1
   end
-  
-  it "should not modify input value" do
+
+  it "should leave whitespaces inside other attributes" do
+    text = "<a onclick=\"alert('     ')\" unknown_attr='   a  a'>a</a>"
+    HtmlPress.compress(text).should eql text
+  end
+
+  it "should report javascript errors" do
     script_with_error = "<script>function(){</script>"
     l = Lg.new
     l.warns.size.should eql 0
     HtmlPress.compress(script_with_error, {:logger => l}).should eql script_with_error
     l.warns.size.should eql 1
   end
-  # it "should remove unnecessary attributes" do
-    # HtmlPress.compress("<script type=\"text/javascript\">var a;</script>").should eql "<script>var a;</script>"
+
+  # it "should report css errors" do
+    # script_with_error = "<style>.clas{margin:</style>"
+    # l = Lg.new
+    # l.warns.size.should eql 0
+    # HtmlPress.compress(script_with_error, {:logger => l}).should eql script_with_error
+    # l.warns.size.should eql 1
+  # end
+
+  it "should remove values of boolean attributes" do
+    HtmlPress.compress("<option selected=\"selected\">a</option>").should eql "<option selected>a</option>"
+    HtmlPress.compress("<input type=\"checkbox\" checked=\"checked\"/>").should eql "<input type=\"checkbox\" checked/>"
+    HtmlPress.compress("<input type=\"radio\" checked=\"checked\"/>").should eql "<input type=\"radio\" checked/>"
+    # disabled            (input, textarea, button, select, option, optgroup)
+    HtmlPress.compress("<input disabled=\"disabled\"/>").should eql "<input disabled/>"
+    # readonly            (input type=text/password, textarea)
+    HtmlPress.compress("<input readonly=\"readonly\"/>").should eql "<input readonly/>"
+    # HtmlPress.compress("<script src=\"example.com\" async=\"async\"></script>").should eql "<script src=\"example.com\" async></script>"
+    # HtmlPress.compress("<script src=\"example.com\" defer=\"defer\"></script>").should eql "<script src=\"example.com\" async></script>"
+    # HtmlPress.compress("<select multiple=\"multiple\"/>").should eql "<select multiple/>"
+    # ismap     isMap     (img, input type=image)
+    # declare             (object; never used)
+    # noresize  noResize  (frame)
+    # nowrap    noWrap    (td, th; deprecated)
+    # noshade   noShade   (hr; deprecated)
+    # compact             (ul, ol, dl, menu, dir; deprecated)
+  end
+
+  it "should remove attributes with default values" do
+    # HtmlPress.compress("<script type=\"text/javascript\" language=\"JavaScript\">var a;</script>").should eql "<script>var a;</script>"
+    # HtmlPress.compress("<style type=\"text/stylesheet\"></style>").should eql "<style></style>"
+    HtmlPress.compress("<link type=\"text/stylesheet\"/>").should eql "<link/>"
+    HtmlPress.compress("<form method=\"get\"></form>").should eql "<form></form>"
+    HtmlPress.compress("<input type=\"text\"/>").should eql "<input/>"
+    # input value "" ?
+  end
+
+  # it "should compress javascript in event attributes" do
+    # # javascript: - remove
+    # # onfocus
+    # # onblur
+    # # onselect
+    # # onchange
+    # # onclick
+    # # ondblclick
+    # # onmousedown
+    # # onmouseup
+    # # onmouseover
+    # # onmousemove
+    # # onmouseout
+    # # onkeypress
+    # # onkeydown
+    # # onkeyup
+  # end
+# 
+  # it "should remove unnecessary quotes for attributes values" do
+  # end
+# 
+  # it "should convert html entities to utf-8 symbols" do
+    # # except <>&
   # end
 
 end
