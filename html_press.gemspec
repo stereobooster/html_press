@@ -25,4 +25,5 @@ Gem::Specification.new do |s|
   
   s.add_runtime_dependency "rainpress"
   s.add_runtime_dependency "uglifier"
+  s.add_runtime_dependency "htmlentities"
 end

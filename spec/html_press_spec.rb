@@ -172,6 +172,11 @@ describe HtmlPress do
     # input value "" ?
   end
 
+  it "should convert html entities to utf-8 symbols" do
+    HtmlPress.compress("&lt; &#60; &gt; &#62; &amp; &#38;").should eql "&lt; &#60; &gt; &#62; &amp; &#38;"
+    HtmlPress.compress("&eacute;lan").should eql "élan"
+  end
+
   # it "should compress javascript in event attributes" do
     # # javascript: - remove
     # # onfocus
@@ -191,10 +196,6 @@ describe HtmlPress do
   # end
 # 
   # it "should remove unnecessary quotes for attributes values" do
-  # end
-# 
-  # it "should convert html entities to utf-8 symbols" do
-    # # except <>&
   # end
 
 end
