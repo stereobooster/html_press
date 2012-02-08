@@ -68,6 +68,23 @@ bundle install
 bundle exec jekyll
 ```
 
+## Additional tools
+
+  - https://github.com/aberant/css-spriter
+  - https://github.com/sstephenson/sprockets
+  - https://github.com/documentcloud/jammit
+  - https://github.com/cjohansen/juicer
+
+## TODO
+
+  - options
+  - bin
+  - Support other minifiers (Closure, YUI compressor)
+  - htmlTydi
+  - add examples of usage with Sinatra and Rails
+  - https://github.com/gfranco/jeanny
+  - https://github.com/aanand/deadweight
+
 ## Alternatives
 
 ###Ruby
@@ -80,13 +97,3 @@ bundle exec jekyll
   - http://code.google.com/p/htmlcompressor/
   - smarty `strip` tag
   - W3 total cache (WP plugin from smashingmagazine contains html minifier)
-
-## TODO
-
-  - options
-  - bin
-  - Support other minifiers (Closure, YUI compressor)
-  - htmlTydi
-  - add examples of usage with Sinatra and Rails
-  - https://github.com/gfranco/jeanny
-  - https://github.com/aanand/deadweight
