@@ -88,3 +88,5 @@ bundle exec jekyll
   - Support other minifiers (Closure, YUI compressor)
   - htmlTydi
   - add examples of usage with Sinatra and Rails
+  - https://github.com/gfranco/jeanny
+  - https://github.com/aanand/deadweight
