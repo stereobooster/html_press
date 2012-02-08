@@ -3,12 +3,12 @@
 require_relative "../lib/html_press"
 
 class Lg
-  attr_accessor :warns
-  def initialize
-    @warns = []
-  end
-  def warn text
-    @warns.push text
+  class << self
+    @warns = [] 
+    attr_accessor :warns
+    def log text
+      Lg.warns.push text
+    end
   end
 end
 
@@ -130,10 +130,9 @@ describe HtmlPress do
 
   it "should report javascript errors" do
     script_with_error = "<script>function(){</script>"
-    l = Lg.new
-    l.warns.size.should eql 0
-    HtmlPress.compress(script_with_error, {:logger => l}).should eql script_with_error
-    l.warns.size.should eql 1
+    Lg.warns = []
+    HtmlPress.compress(script_with_error, {:logger => Lg.method(:log)}).should eql script_with_error
+    Lg.warns.size.should eql 1
   end
 
   # it "should report css errors" do
@@ -177,6 +176,23 @@ describe HtmlPress do
     HtmlPress.compress("&eacute;lan").should eql "élan"
   end
 
+  it "should remove unnecessary quotes for attribute values" do
+    HtmlPress.compress("<img src=\"\">", {:unquoted_attributes => true}).should eql "<img src>"
+    HtmlPress.compress("<p id=\"a\"></p>", {:unquoted_attributes => true}).should eql "<p id=a></p>"
+    text = "<p id=\"a b\"></p>"
+    HtmlPress.compress(text, {:unquoted_attributes => true}).should eql text
+    text = "<p id=\"a=\"></p>"
+    HtmlPress.compress(text, {:unquoted_attributes => true}).should eql text
+    text = "<p id=\"a'\"></p>"
+    HtmlPress.compress(text, {:unquoted_attributes => true}).should eql text
+    text = "<p id=\"a`\"></p>"
+    HtmlPress.compress(text, {:unquoted_attributes => true}).should eql text
+    text = "<p id='a\"'></p>"
+    HtmlPress.compress(text, {:unquoted_attributes => true}).should eql text
+    text = "<p id=\"a\t\"></p>"
+    HtmlPress.compress(text, {:unquoted_attributes => true}).should eql text
+  end
+
   # it "should compress javascript in event attributes" do
     # # javascript: - remove
     # # onfocus
@@ -193,9 +209,6 @@ describe HtmlPress do
     # # onkeypress
     # # onkeydown
     # # onkeyup
-  # end
-# 
-  # it "should remove unnecessary quotes for attributes values" do
   # end
 
 end

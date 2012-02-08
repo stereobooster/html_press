@@ -77,7 +77,6 @@ bundle exec jekyll
 
 ## TODO
 
-  - options
   - bin
   - Support other minifiers (Closure, YUI compressor)
   - htmlTydi

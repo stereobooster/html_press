@@ -2,12 +2,22 @@ module HtmlPress
   class Html
 
     def initialize (options = nil)
-      @options = options
+      @options = {
+        :logger => false,
+        :unquoted_attributes => false 
+      }
+      if !options.nil?
+        @options.each do |index, value|
+          if !options[index].nil?
+            @options[index] = options[index]
+          end
+        end
+      end
     end
 
     def log (text)
-      if !@options.nil? && @options[:logger]
-        @options[:logger].warn text
+      if @options[:logger]
+        @options[:logger].call text
       end
     end
 
@@ -222,7 +232,16 @@ module HtmlPress
           # value = HtmlPress.js_compressor value
         # end
 
-        attribute = name_original + "=" + delimiter + value_original + delimiter
+        if @options[:unquoted_attributes] && !(value_original =~ /[\s"'`=<>]/)
+          if value_original.size > 0
+            attribute = name_original + "=" + value_original
+          else
+            attribute = name_original
+          end
+        else
+          attribute = name_original + "=" + delimiter + value_original + delimiter
+        end
+
       end
 
       attribute
