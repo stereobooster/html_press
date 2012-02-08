@@ -13,7 +13,7 @@ module HtmlPress
 
     def compile (html)
 
-      out = html + ""
+      out = html.dup
 
       @replacement_hash = 'MINIFYHTML' + Time.now.to_i.to_s
       @placeholders = []
