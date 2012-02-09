@@ -228,16 +228,21 @@ module HtmlPress
           value_original.gsub!(/^\s+|\s+$/, "")
         end
 
-        # if name == "onclick"
-          # value = HtmlPress.js_compressor value
-        # end
-
-        if @options[:unquoted_attributes] && !(value_original =~ /[\s"'`=<>]/)
-          if value_original.size > 0
-            attribute = name_original + "=" + value_original
-          else
-            attribute = name_original
+        events = %w[onfocus onblur onselect onchange onclick
+ondblclick onmousedown onmouseup onmouseover onmousemove
+onmouseout onkeypress onkeydown onkeyup]
+        if events.include? name
+          value_original.gsub! /^javascript:\s+/, ''
+          value_original = HtmlPress.js_compressor value_original
+          if delimiter == "\""
+            value_original.gsub! "\"", "'"
           end
+        end
+
+        if @options[:unquoted_attributes] &&
+          value_original.size != 0 && #attribute without value may be dropped by IE7
+          !(value_original =~ /[\s"'`=<>]/)
+            attribute = name_original + "=" + value_original
         else
           attribute = name_original + "=" + delimiter + value_original + delimiter
         end

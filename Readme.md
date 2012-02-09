@@ -74,6 +74,7 @@ bundle exec jekyll
   - https://github.com/sstephenson/sprockets
   - https://github.com/documentcloud/jammit
   - https://github.com/cjohansen/juicer
+  - https://github.com/alexdunae/w3c_validators
 
 ## TODO
 

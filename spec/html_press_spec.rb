@@ -177,7 +177,7 @@ describe HtmlPress do
   end
 
   it "should remove unnecessary quotes for attribute values" do
-    HtmlPress.compress("<img src=\"\">", {:unquoted_attributes => true}).should eql "<img src>"
+    HtmlPress.compress("<img src=\"\">", {:unquoted_attributes => true}).should eql "<img src=\"\">"
     HtmlPress.compress("<p id=\"a\"></p>", {:unquoted_attributes => true}).should eql "<p id=a></p>"
     text = "<p id=\"a b\"></p>"
     HtmlPress.compress(text, {:unquoted_attributes => true}).should eql text
@@ -193,22 +193,22 @@ describe HtmlPress do
     HtmlPress.compress(text, {:unquoted_attributes => true}).should eql text
   end
 
-  # it "should compress javascript in event attributes" do
-    # # javascript: - remove
-    # # onfocus
-    # # onblur
-    # # onselect
-    # # onchange
-    # # onclick
-    # # ondblclick
-    # # onmousedown
-    # # onmouseup
-    # # onmouseover
-    # # onmousemove
-    # # onmouseout
-    # # onkeypress
-    # # onkeydown
-    # # onkeyup
-  # end
+  it "should compress javascript in event attributes" do
+    HtmlPress.compress("<a onclick=\"javacript: alert('  ');\"></a>").should eql "<a onclick=\"alert('  ')\"></a>"
+    # onfocus
+    # onblur
+    # onselect
+    # onchange
+    # onclick
+    # ondblclick
+    # onmousedown
+    # onmouseup
+    # onmouseover
+    # onmousemove
+    # onmouseout
+    # onkeypress
+    # onkeydown
+    # onkeyup
+  end
 
 end
