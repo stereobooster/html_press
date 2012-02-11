@@ -193,6 +193,10 @@ describe HtmlPress do
     HtmlPress.compress(text, {:unquoted_attributes => true}).should eql text
   end
 
+  it "should remove empty attribute values" do
+    HtmlPress.compress("<img src=\"\">", {:dump_empty_values => true}).should eql "<img src>"
+  end
+
   it "should compress javascript in event attributes" do
     HtmlPress.compress("<a onclick=\"javacript: alert('  ');\"></a>").should eql "<a onclick=\"alert('  ')\"></a>"
     # onfocus

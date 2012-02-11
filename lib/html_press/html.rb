@@ -4,7 +4,8 @@ module HtmlPress
     def initialize (options = nil)
       @options = {
         :logger => false,
-        :unquoted_attributes => false 
+        :unquoted_attributes => false,
+        :dump_empty_values => false 
       }
       if !options.nil?
         @options.each do |index, value|
@@ -239,10 +240,15 @@ onmouseout onkeypress onkeydown onkeyup]
           end
         end
 
-        if @options[:unquoted_attributes] &&
-          value_original.size != 0 && #attribute without value may be dropped by IE7
-          !(value_original =~ /[\s"'`=<>]/)
-            attribute = name_original + "=" + value_original
+        if value_original.size == 0
+          #attribute without value may be dropped by IE7
+          if @options[:dump_empty_values]
+            attribute = name_original
+          else
+            attribute = name_original + "=" + delimiter + delimiter
+          end
+        elsif @options[:unquoted_attributes] && !(value_original =~ /[\s"'`=<>]/)
+          attribute = name_original + "=" + value_original
         else
           attribute = name_original + "=" + delimiter + value_original + delimiter
         end
