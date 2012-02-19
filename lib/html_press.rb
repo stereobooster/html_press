@@ -5,7 +5,13 @@ require "html_press/html_entities"
 require "html_press/html"
 
 module HtmlPress
-    def self.compress(text, options = nil)
-      self::Html.new(options).compile text
-    end
+  def self.press(text, options = {})
+    HtmlPress::Html.new(options).press text
+  end
+
+  # for backward compatibility
+  def self.compress(text, options = {})
+    HtmlPress::Html.new(options).press text
+  end
+
 end

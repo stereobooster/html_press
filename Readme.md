@@ -36,7 +36,7 @@ module Jekyll
       def render(context)
         text = super
         before = text.bytesize
-        text = HtmlPress.compress text
+        text = HtmlPress.press text
         after = text.bytesize
 
         self.class.total_economy += before - after

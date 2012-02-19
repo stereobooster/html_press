@@ -1,30 +1,25 @@
 module HtmlPress
   class Html
 
-    def initialize (options = nil)
-      @options = {
-        :logger => false,
-        :unquoted_attributes => false,
-        :dump_empty_values => false 
-      }
-      if !options.nil?
-        @options.each do |index, value|
-          if !options[index].nil?
-            @options[index] = options[index]
-          end
-        end
-      end
+    DEFAULTS = {
+      :logger => false,
+      :unquoted_attributes => false,
+      :dump_empty_values => false 
+    }
+
+    def initialize (options = {})
+      @options = DEFAULTS.merge(options)
     end
 
     def log (text)
-      if @options[:logger]
+      if @options[:logger] && @options[:logger].respond_to?(:call)
         @options[:logger].call text
       end
     end
 
-    def compile (html)
+    def press (html)
 
-      out = html.dup
+      out = html.respond_to?(:read) ? html.read : html.dup
 
       @replacement_hash = 'MINIFYHTML' + Time.now.to_i.to_s
       @placeholders = []
@@ -230,8 +225,9 @@ module HtmlPress
         end
 
         events = %w[onfocus onblur onselect onchange onclick
-ondblclick onmousedown onmouseup onmouseover onmousemove
-onmouseout onkeypress onkeydown onkeyup]
+          ondblclick onmousedown onmouseup onmouseover onmousemove
+          onmouseout onkeypress onkeydown onkeyup]
+
         if events.include? name
           value_original.gsub! /^javascript:\s+/, ''
           value_original = HtmlPress.js_compressor value_original
@@ -257,6 +253,9 @@ onmouseout onkeypress onkeydown onkeyup]
 
       attribute
     end
+
+    # for backward compatibility
+    alias :compile :press
 
   end
 end
