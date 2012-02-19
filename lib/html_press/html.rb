@@ -86,7 +86,6 @@ module HtmlPress
       end
 
       # trim each line.
-      # @todo take into account attribute values that span multiple lines.
       out.gsub!(/^\s+|\s+$/m, '')
 
       re = '\\s+(<\\/?(?:area|base(?:font)?|blockquote|body' +
@@ -243,7 +242,7 @@ module HtmlPress
           else
             attribute = name_original + "=" + delimiter + delimiter
           end
-        elsif @options[:unquoted_attributes] && !(value_original =~ /[\s"'`=<>]/)
+        elsif @options[:unquoted_attributes] && !(value_original =~ /[ \t\r\n\f"'`=<>]/)
           attribute = name_original + "=" + value_original
         else
           attribute = name_original + "=" + delimiter + value_original + delimiter
