@@ -78,6 +78,8 @@ bundle exec jekyll
 
 ## TODO
 
+  - check if all utf-8 symbols, are smaller than html entities
+  - ambigious ampersands
   - bin
   - Support other minifiers (Closure, YUI compressor)
   - htmlTydi

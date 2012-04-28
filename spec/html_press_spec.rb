@@ -48,7 +48,7 @@ describe HtmlPress do
 
   it "should compress css in style tags" do
     style = "  div { margin: 0px 0px; \n}  "
-    pressed_style = "<style>" + HtmlPress.css_compressor(style) + "</style>"
+    pressed_style = "<style>" + HtmlPress.style_compressor(style) + "</style>"
     style = "  <style>" + style + "</style>  "
     HtmlPress.press(style).should eql pressed_style
   end
@@ -108,7 +108,7 @@ describe HtmlPress do
   end
 
   it "should compress css in style attributes" do
-    HtmlPress.press("<p style=\"display: none;\"></p>").should eql "<p style=\"display:none;\"></p>"
+    HtmlPress.press("<p style=\"display: none;\"></p>").should eql "<p style=\"display:none\"></p>"
   end
 
   it "should work with namespaces" do

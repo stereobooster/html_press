@@ -52,7 +52,7 @@ module HtmlPress
         m.gsub!(/^\s+|\s+$/, '')
         css = m.gsub(/\s*<style\b[^>]*?>([\s\S]*?)<\/style>\s*/i, "\\1")
         begin
-          css_compressed = HtmlPress.css_compressor css
+          css_compressed = HtmlPress.style_compressor css
           m.gsub!(css, css_compressed)
         rescue Exception => e
           log e.message
