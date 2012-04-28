@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec"
   s.add_development_dependency "rake"
   
-  s.add_runtime_dependency "css_press"
+  s.add_runtime_dependency "css_press", ">=0.3.1"
   s.add_runtime_dependency "uglifier"
   s.add_runtime_dependency "htmlentities"
 end
