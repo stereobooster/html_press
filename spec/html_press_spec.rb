@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require_relative "../lib/html_press"
+require File.expand_path("../lib/html_press", File.dirname(__FILE__))
 
 class Lg
   class << self
