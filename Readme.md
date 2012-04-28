@@ -1,5 +1,7 @@
 #html_press
 
+[![Build Status](https://secure.travis-ci.org/stereobooster/html_press.png?branch=master)](http://travis-ci.org/stereobooster/html_press)
+
 ## how it works
 
 Remove all whitespace junk. Leave only HTML
