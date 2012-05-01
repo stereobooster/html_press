@@ -215,4 +215,8 @@ describe HtmlPress do
     # onkeyup
   end
 
+  # it "should concatenate adjecent scrypt and style tags" do
+  #   all stylle tags can be collected, concatneated and placed in headre
+  # end
+
 end
