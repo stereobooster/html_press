@@ -110,6 +110,9 @@ describe HtmlPress do
   it "should compress css in style attributes" do
     HtmlPress.press("<p style=\"display: none;\"></p>").should eql "<p style=\"display:none\"></p>"
     HtmlPress.press("<p style=\"\"></p>").should eql "<p style=\"\"></p>"
+    #FIX those tests can be broken if algorithm of css_press will be changed
+    HtmlPress.press("<p style=\"font-family:Arial ,'Helvetica Neue'\"></p>").should eql "<p style=\"font-family:Arial ,'Helvetica Neue'\"></p>"
+    HtmlPress.press("<p style='font-family:Arial ,\"Helvetica Neue\"'></p>").should eql "<p style='font-family:Arial ,\"Helvetica Neue\"'></p>"
   end
 
   it "should work with namespaces" do

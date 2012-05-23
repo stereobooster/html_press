@@ -229,6 +229,12 @@ module HtmlPress
         if name == "style"
           begin
             value_original = HtmlPress.css_compressor value_original
+            # TODO what about escaped attribute values?
+            if delimiter == "\""
+              value_original.gsub!("\"", "'")
+            else
+              value_original.gsub!("'", "\"")
+            end
           rescue Exception => e
             log e.message
           end
@@ -247,6 +253,7 @@ module HtmlPress
           value_original.gsub! /^javascript:\s+|;$/, ''
           begin
             value_original = HtmlPress.js_compressor value_original
+            # TODO what about escaped attribute values?
             if delimiter == "\""
               value_original.gsub! "\"", "'"
             end
