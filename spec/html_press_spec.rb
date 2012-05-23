@@ -171,6 +171,7 @@ describe HtmlPress do
     HtmlPress.press("<script type=\"text/javascript\" language=\"JavaScript\">var a</script>").should eql "<script>var a</script>"
     HtmlPress.press("<style type=\"text/stylesheet\"></style>").should eql "<style></style>"
     HtmlPress.press("<link type=\"text/stylesheet\"/>").should eql "<link/>"
+    HtmlPress.press("<link rel=\"alternate\" type=\"application/rss+xml\"/>").should eql "<link rel=\"alternate\" type=\"application/rss+xml\"/>"
     HtmlPress.press("<form method=\"get\"></form>").should eql "<form></form>"
     HtmlPress.press("<input type=\"text\"/>").should eql "<input/>"
     # input value "" ?

@@ -182,19 +182,25 @@ module HtmlPress
       name = name_original.downcase
       tag_name = tag.downcase
 
+      if value.size > 0
+        re = "^=" + delimiter + "|" + delimiter + "$"
+        re = Regexp.new re
+        value_original.gsub!(re, "")
+      end
+
       case tag_name
       when "script"
-        if name == "type" || name == "language"
+        if (name == "type" && value_original == "text/javascript") || (name == "language" && value_original == "JavaScript")
           return ""
         elsif name == "async" || name == "defer"
           return name_original
         end
       when "form"
-        if name == "method" && (value == "=\"get\"" || value == "='get'")
+        if name == "method" && value_original == "get"
           return ""
         end
       when /link|style/
-        if name == "type"
+        if name == "type" && value_original == "text/stylesheet"
           return ""
         end
       when /input|textarea|button|select|option|optgroup/
@@ -220,11 +226,7 @@ module HtmlPress
         end
       end
 
-      if value.size != 0
-
-        re = "^=" + delimiter + "|" + delimiter + "$"
-        re = Regexp.new re
-        value_original.gsub!(re, "")
+      if value.size > 0
 
         if name == "style"
           begin
