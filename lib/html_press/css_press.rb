@@ -4,7 +4,7 @@ module HtmlPress
     def self.css_compressor (text)
       text = "a{#{text}}"
       text = CssPress.press text
-      text.gsub(/^a\{/, '').gsub!(/\}$/, '')
+      text.gsub(/^a\{/, '').gsub(/\}$/, '')
     end
     def self.style_compressor (text)
       CssPress.press text

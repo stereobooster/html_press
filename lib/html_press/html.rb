@@ -4,11 +4,15 @@ module HtmlPress
     DEFAULTS = {
       :logger => false,
       :unquoted_attributes => false,
-      :dump_empty_values => false 
+      :drop_empty_values => false 
     }
 
     def initialize (options = {})
       @options = DEFAULTS.merge(options)
+      if @options.keys.include? :dump_empty_values
+        @options[:drop_empty_values] = @options.delete(:dump_empty_values)
+        warn "dump_empty_values deprecated use drop_empty_values"
+      end
     end
 
     def log (text)
@@ -37,6 +41,9 @@ module HtmlPress
       # replace SCRIPTs (and minify) with placeholders
       out.gsub! /\s*(<script\b[^>]*?>[\s\S]*?<\/script>)\s*/i do |m|
         m.gsub!(/^\s+|\s+$/, '')
+        m.gsub! /<[a-z\-:]+\s([^>]+)>/i do |m|
+          attrs(m, '[a-z\-:]+', true)
+        end
         js = m.gsub(/\s*<script\b[^>]*?>([\s\S]*?)<\/script>\s*/i , "\\1")
         begin
           js_compressed = HtmlPress.js_compressor js
@@ -50,6 +57,9 @@ module HtmlPress
       # replace STYLEs (and minify) with placeholders
       out.gsub! /\s*(<style\b[^>]*?>[\s\S]*?<\/style>)\s*/i do |m|
         m.gsub!(/^\s+|\s+$/, '')
+        m.gsub! /<[a-z\-:]+\s([^>]+)>/i do |m|
+          attrs(m, '[a-z\-:]+', true)
+        end
         css = m.gsub(/\s*<style\b[^>]*?>([\s\S]*?)<\/style>\s*/i, "\\1")
         begin
           css_compressed = HtmlPress.style_compressor css
@@ -150,15 +160,17 @@ module HtmlPress
           attr k, "'", tag
         end
   
+        attributes_compressed = " " + attributes_compressed.strip
+
         if attributes_compressed == " /"
           attributes_compressed = "/"
         elsif attributes_compressed == " "
           attributes_compressed = ""
         end
-        return m.gsub(attributes, attributes_compressed)
+        m.gsub(attributes, attributes_compressed)
+      else
+        m
       end
-
-      return m
     end
 
     def attr(attribute, delimiter, tag)
@@ -215,7 +227,11 @@ module HtmlPress
         value_original.gsub!(re, "")
 
         if name == "style"
-          value_original = HtmlPress.css_compressor value_original
+          begin
+            value_original = HtmlPress.css_compressor value_original
+          rescue Exception => e
+            log e.message
+          end
         end
 
         if name == "class"
@@ -228,16 +244,20 @@ module HtmlPress
           onmouseout onkeypress onkeydown onkeyup]
 
         if events.include? name
-          value_original.gsub! /^javascript:\s+/, ''
-          value_original = HtmlPress.js_compressor value_original
-          if delimiter == "\""
-            value_original.gsub! "\"", "'"
+          value_original.gsub! /^javascript:\s+|;$/, ''
+          begin
+            value_original = HtmlPress.js_compressor value_original
+            if delimiter == "\""
+              value_original.gsub! "\"", "'"
+            end
+          rescue Exception => e
+            log e.message
           end
         end
 
         if value_original.size == 0
           #attribute without value may be dropped by IE7
-          if @options[:dump_empty_values]
+          if @options[:drop_empty_values]
             attribute = name_original
           else
             attribute = name_original + "=" + delimiter + delimiter

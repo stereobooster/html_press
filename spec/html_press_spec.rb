@@ -109,6 +109,7 @@ describe HtmlPress do
 
   it "should compress css in style attributes" do
     HtmlPress.press("<p style=\"display: none;\"></p>").should eql "<p style=\"display:none\"></p>"
+    HtmlPress.press("<p style=\"\"></p>").should eql "<p style=\"\"></p>"
   end
 
   it "should work with namespaces" do
@@ -129,19 +130,20 @@ describe HtmlPress do
   end
 
   it "should report javascript errors" do
-    script_with_error = "<script>function(){</script>"
-    Lg.warns = []
-    HtmlPress.press(script_with_error, {:logger => Lg.method(:log)}).should eql script_with_error
-    Lg.warns.size.should eql 1
+    ["<script>function(){</script>", "<a onclick=\"return false\"></a>"].each do |script_with_error|
+      Lg.warns = []
+      HtmlPress.press(script_with_error, {:logger => Lg.method(:log)}).should eql script_with_error
+      Lg.warns.size.should eql 1
+    end
   end
 
-  # it "should report css errors" do
-    # script_with_error = "<style>.clas{margin:</style>"
-    # l = Lg.new
-    # l.warns.size.should eql 0
-    # HtmlPress.press(script_with_error, {:logger => l}).should eql script_with_error
-    # l.warns.size.should eql 1
-  # end
+  it "should report css errors" do
+    ["<style>.clas{margin:</style>", "<a style=\"#asd\">link</a>"].each do |style_with_error|
+      Lg.warns = []
+      HtmlPress.press(style_with_error, {:logger => Lg.method(:log)}).should eql style_with_error
+      Lg.warns.size.should eql 1
+    end
+  end
 
   it "should remove values of boolean attributes" do
     HtmlPress.press("<option selected=\"selected\">a</option>").should eql "<option selected>a</option>"
@@ -163,8 +165,8 @@ describe HtmlPress do
   end
 
   it "should remove attributes with default values" do
-    # HtmlPress.press("<script type=\"text/javascript\" language=\"JavaScript\">var a;</script>").should eql "<script>var a;</script>"
-    # HtmlPress.press("<style type=\"text/stylesheet\"></style>").should eql "<style></style>"
+    HtmlPress.press("<script type=\"text/javascript\" language=\"JavaScript\">var a</script>").should eql "<script>var a</script>"
+    HtmlPress.press("<style type=\"text/stylesheet\"></style>").should eql "<style></style>"
     HtmlPress.press("<link type=\"text/stylesheet\"/>").should eql "<link/>"
     HtmlPress.press("<form method=\"get\"></form>").should eql "<form></form>"
     HtmlPress.press("<input type=\"text\"/>").should eql "<input/>"
@@ -194,29 +196,21 @@ describe HtmlPress do
   end
 
   it "should remove empty attribute values" do
-    HtmlPress.press("<img src=\"\">", {:dump_empty_values => true}).should eql "<img src>"
+    HtmlPress.press("<img src=\"\">", {:drop_empty_values => true}).should eql "<img src>"
   end
 
   it "should compress javascript in event attributes" do
-    HtmlPress.press("<a onclick=\"javacript: alert('  ');\"></a>").should eql "<a onclick=\"alert('  ')\"></a>"
-    # onfocus
-    # onblur
-    # onselect
-    # onchange
-    # onclick
-    # ondblclick
-    # onmousedown
-    # onmouseup
-    # onmouseover
-    # onmousemove
-    # onmouseout
-    # onkeypress
-    # onkeydown
-    # onkeyup
+    %w[onfocus onblur onselect onchange onclick
+      ondblclick onmousedown onmouseup onmouseover onmousemove
+      onmouseout onkeypress onkeydown onkeyup
+    ].each do |evt|
+      HtmlPress.press("<a #{evt}=\"javacript: alert('  ');\"></a>").should eql "<a #{evt}=\"alert('  ')\"></a>"
+      HtmlPress.press("<a #{evt}=\"\"></a>").should eql "<a #{evt}=\"\"></a>"
+    end
   end
 
   # it "should concatenate adjecent scrypt and style tags" do
-  #   all stylle tags can be collected, concatneated and placed in headre
+  #   all stylle tags can be collected, concatneated and placed in header
   # end
 
 end
