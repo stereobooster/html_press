@@ -190,6 +190,8 @@ module HtmlPress
 
       case tag_name
       when "script"
+        p name
+        p value_original
         if (name == "type" && value_original == "text/javascript") || (name == "language" && value_original == "JavaScript")
           return ""
         elsif name == "async" || name == "defer"
