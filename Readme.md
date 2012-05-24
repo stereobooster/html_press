@@ -70,34 +70,29 @@ bundle install
 bundle exec jekyll
 ```
 
-## Additional tools
-
-  - https://github.com/aberant/css-spriter
-  - https://github.com/sstephenson/sprockets
-  - https://github.com/documentcloud/jammit
-  - https://github.com/cjohansen/juicer
-  - https://github.com/alexdunae/w3c_validators
-
 ## TODO
 
   - check if all utf-8 symbols, are smaller than html entities
   - ambigious ampersands
   - bin
-  - Support other minifiers (Closure, YUI compressor)
+  - Support other js/css minifiers (Closure, YUI compressor)
   - htmlTydi
   - add examples of usage with Sinatra and Rails
-  - https://github.com/gfranco/jeanny
-  - https://github.com/aanand/deadweight
+  - use parser ([鋸](https://github.com/tenderlove/nokogiri)) instead of regexp's
 
 ## Alternatives
 
-###Ruby
+  - [html-minifier](https://github.com/kangax/html-minifier) (js), [test suite](https://github.com/kangax/html-minifier/blob/gh-pages/tests/index.html), [ruby wrapper - html_minifier](https://github.com/stereobooster/html_minifier)
+  - [htmlcompressor](http://code.google.com/p/htmlcompressor/) (java), [test suite](http://code.google.com/p/htmlcompressor/source/browse/#svn%2Ftrunk%2Fsrc%2Ftest%2Fresources%2Fhtml%253Fstate%253Dclosed)
+  - PHPTal compress (php), [test suite](https://svn.motion-twin.com/phptal/trunk/tests/CompressTest.php)
+  - [W3 total cache](http://wordpress.org/extend/plugins/w3-total-cache/) - WP plugin from smashingmagazine contains html minifier (php)
 
-  - https://github.com/completelynovel/html_compressor
-  - https://github.com/MadRabbit/frontcompiler
+## Additional tools
 
-###Other
-
-  - http://code.google.com/p/htmlcompressor/
-  - smarty `strip` tag
-  - W3 total cache (WP plugin from smashingmagazine contains html minifier)
+  - https://github.com/gfranco/jeanny
+  - https://github.com/aanand/deadweight
+  - https://github.com/aberant/css-spriter
+  - https://github.com/sstephenson/sprockets
+  - https://github.com/documentcloud/jammit
+  - https://github.com/cjohansen/juicer
+  - https://github.com/alexdunae/w3c_validators

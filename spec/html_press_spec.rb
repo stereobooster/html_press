@@ -213,7 +213,7 @@ describe HtmlPress do
     end
   end
 
-  # it "should concatenate adjecent scrypt and style tags" do
+  # it "should concatenate adjecent script and style tags" do
   #   all stylle tags can be collected, concatneated and placed in header
   # end
 
