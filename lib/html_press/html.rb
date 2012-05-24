@@ -41,10 +41,10 @@ module HtmlPress
       # replace SCRIPTs (and minify) with placeholders
       out.gsub! /\s*(<script\b[^>]*?>[\s\S]*?<\/script>)\s*/i do |m|
         m.gsub!(/^\s+|\s+$/, '')
-        m.gsub! /<[a-z\-:]+\s([^>]+)>/i do |m|
-          attrs(m, '[a-z\-:]+', true)
+        m = m.gsub /^<script\s([^>]+)>/i do |m|
+          attrs(m, 'script', true)
         end
-        js = m.gsub(/\s*<script\b[^>]*?>([\s\S]*?)<\/script>\s*/i , "\\1")
+        js = m.gsub(/^<script\b[^>]*?>([\s\S]*?)<\/script>/i , "\\1")
         begin
           js_compressed = HtmlPress.js_compressor js
           m.gsub!(js, js_compressed)
@@ -57,10 +57,10 @@ module HtmlPress
       # replace STYLEs (and minify) with placeholders
       out.gsub! /\s*(<style\b[^>]*?>[\s\S]*?<\/style>)\s*/i do |m|
         m.gsub!(/^\s+|\s+$/, '')
-        m.gsub! /<[a-z\-:]+\s([^>]+)>/i do |m|
-          attrs(m, '[a-z\-:]+', true)
+        m = m.gsub /^<style\s([^>]+)>/i do |m|
+          attrs(m, 'style', true)
         end
-        css = m.gsub(/\s*<style\b[^>]*?>([\s\S]*?)<\/style>\s*/i, "\\1")
+        css = m.gsub(/^<style\b[^>]*?>([\s\S]*?)<\/style>/i, "\\1")
         begin
           css_compressed = HtmlPress.style_compressor css
           m.gsub!(css, css_compressed)
@@ -214,7 +214,7 @@ module HtmlPress
           return name_original
         end
         if tag_name == "input"
-          if name == "type" && (value == "=\"text\"" || value == "='text'")
+          if name == "type" && value_original == "text"
             return ""
           end
           if name == "checked"
