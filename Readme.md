@@ -72,13 +72,13 @@ bundle exec jekyll
 
 ## TODO
 
+  - use parser ([鋸](https://github.com/tenderlove/nokogiri)) instead of regexp's
   - check if all utf-8 symbols, are smaller than html entities
   - ambigious ampersands
-  - bin
+  - cli
   - Support other js/css minifiers (Closure, YUI compressor)
   - htmlTydi
   - add examples of usage with Sinatra and Rails
-  - use parser ([鋸](https://github.com/tenderlove/nokogiri)) instead of regexp's
 
 ## Alternatives
 
@@ -96,3 +96,8 @@ bundle exec jekyll
   - https://github.com/documentcloud/jammit
   - https://github.com/cjohansen/juicer
   - https://github.com/alexdunae/w3c_validators
+
+## Resources
+  - http://perfectionkills.com/experimenting-with-html-minifier
+  - http://perfectionkills.com/optimizing-html
+  - https://developers.google.com/speed/articles/optimizing-html
