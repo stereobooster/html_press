@@ -120,6 +120,12 @@ describe HtmlPress do
     HtmlPress.press(text).should eql text
   end
 
+  # it "should compress namespaces" do
+  #   text = "<html xmlns:og=\"http://ogp.me/ns#\" class=\"a b\"><og:like>like</og:like></html>"
+  #   text1 = "<html xmlns:a=\"http://ogp.me/ns#\" class=\"a b\"><a:like>like</a:like></html>"
+  #   HtmlPress.press(text).should eql text1
+  # end
+
   it "should not modify input value" do
     text = "<div>   </div>"
     text1 = text.dup
