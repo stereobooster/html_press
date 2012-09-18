@@ -75,20 +75,16 @@ module HtmlPress
         ''
       end
 
-      # replace entities
-      out.gsub! /&lt;|&#60;|&gt;|&#62;|&amp;|&#38;/ do |m|
-        reserve m
-      end
-
-      out = HtmlPress.entities_compressor out
-
       # replace PREs with placeholders
       out.gsub! /\s*(<pre\b[^>]*?>[\s\S]*?<\/pre>)\s*/i do |m|
         pre = m.gsub(/\s*<pre\b[^>]*?>([\s\S]*?)<\/pre>\s*/i, "\\1")
         pre_compressed = pre.gsub(/\s+$/, '')
+        pre_compressed = HtmlPress.entities_compressor pre_compressed
         m.gsub!(pre, pre_compressed)
         reserve m
       end
+
+      out = HtmlPress.entities_compressor out
 
       # replace TEXTAREAs with placeholders
       out.gsub! /\s*(<textarea\b[^>]*?>[\s\S]*?<\/textarea>)\s*/i do |m|

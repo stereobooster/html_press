@@ -180,6 +180,9 @@ describe HtmlPress do
   it "should convert html entities to utf-8 symbols" do
     HtmlPress.press("&lt; &#60; &gt; &#62; &amp; &#38;").should eql "&lt; &#60; &gt; &#62; &amp; &#38;"
     HtmlPress.press("&eacute;lan").should eql "élan"
+    %W{textarea pre}.each do |t|
+      HtmlPress.press("<#{t}>&#39;</#{t}>").should eql "<#{t}>'</#{t}>"
+    end
   end
 
   it "should remove unnecessary quotes for attribute values" do
