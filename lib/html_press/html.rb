@@ -51,9 +51,9 @@ module HtmlPress
 
     # IE conditional comments
     def process_ie_conditional_comments (out)
-      out.gsub /\s*(<!--\[[^\]]+\]>[\s\S]*?<!\[[^\]]+\]-->)\s*/ do |m|
-        m.gsub!(/^\s+|\s+$/, '')
-        comment = m.gsub(/\s*<!--\[[^\]]+\]>([\s\S]*?)<!\[[^\]]+\]-->\s*/, "\\1")
+      out.gsub /(<!--\[[^\]]+\]>([\s\S]*?)<!\[[^\]]+\]-->)\s*/ do
+        m = $1
+        comment = $2
         comment_compressed = Html.new.press(comment)
         m.gsub!(comment, comment_compressed)
         reserve m
@@ -62,12 +62,11 @@ module HtmlPress
 
     # replace SCRIPTs (and minify) with placeholders
     def process_scripts (out)
-      out.gsub /\s*(<script\b[^>]*?>[\s\S]*?<\/script>)\s*/i do |m|
-        m.gsub!(/^\s+|\s+$/, '')
-        m = m.gsub /^<script\s([^>]+)>/i do |m|
+      out.gsub /(<script\b[^>]*?>([\s\S]*?)<\/script>)\s*/i do
+        js = $2
+        m = $1.gsub /^<script\s([^>]+)>/i do |m|
           attrs(m, 'script', true)
         end
-        js = m.gsub(/^<script\b[^>]*?>([\s\S]*?)<\/script>/i , "\\1")
         begin
           js_compressed = HtmlPress.js_compressor js
           m.gsub!(js, js_compressed)
@@ -80,12 +79,11 @@ module HtmlPress
 
     # replace STYLEs (and minify) with placeholders
     def process_styles (out)
-      out.gsub /\s*(<style\b[^>]*?>[\s\S]*?<\/style>)\s*/i do |m|
-        m.gsub!(/^\s+|\s+$/, '')
-        m = m.gsub /^<style\s([^>]+)>/i do |m|
+      out.gsub /(<style\b[^>]*?>([\s\S]*?)<\/style>)\s*/i do
+        css = $2
+        m = $1.gsub /^<style\s([^>]+)>/i do |m|
           attrs(m, 'style', true)
         end
-        css = m.gsub(/^<style\b[^>]*?>([\s\S]*?)<\/style>/i, "\\1")
         begin
           css_compressed = HtmlPress.style_compressor css
           m.gsub!(css, css_compressed)
@@ -103,8 +101,9 @@ module HtmlPress
 
     # replace PREs with placeholders
     def process_pres (out)
-      out.gsub /\s*(<pre\b[^>]*?>[\s\S]*?<\/pre>)\s*/i do |m|
-        pre = m.gsub(/\s*<pre\b[^>]*?>([\s\S]*?)<\/pre>\s*/i, "\\1")
+      out.gsub /(<pre\b[^>]*?>([\s\S]*?)<\/pre>)\s*/i do
+        pre = $2
+        m = $1
         pre_compressed = pre.gsub(/\s+$/, '')
         pre_compressed = HtmlPress.entities_compressor pre_compressed
         m.gsub!(pre, pre_compressed)
@@ -138,7 +137,7 @@ module HtmlPress
 
     # replace TEXTAREAs with placeholders
     def process_textareas (out)
-      out.gsub /\s*(<textarea\b[^>]*?>[\s\S]*?<\/textarea>)\s*/i do |m|
+      out.gsub /(<textarea\b[^>]*?>[\s\S]*?<\/textarea>)\s*/i do |m|
         reserve m
       end
     end
@@ -188,7 +187,7 @@ module HtmlPress
       end
       
       if attributes.size > 0
-        attributes_compressed = attributes.gsub(/\s*([a-z\-_:]+(="[^"]*")?(='[^']*')?)\s*/i, " \\1")
+        attributes_compressed = attributes.gsub(/([a-z\-_:]+(="[^"]*")?(='[^']*')?)\s*/i, " \\1")
   
         attributes_compressed.gsub! /([a-z\-_:]+="[^"]*")/i do |k|
           attr k, "\"", tag

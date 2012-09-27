@@ -18,7 +18,8 @@ RubyProf.start
 result = RubyProf.stop
 
 after = html.bytesize
-puts "Economy: " + ((before - after).to_f/1024).round(2).to_s + " kb"
+puts "Economy: " + ((before - after).to_f/1024).round(2).to_s + "kb (" +
+  (100*(before - after).to_f/before).round(2).to_s + "%)"
 
 report_path = File.expand_path("../reports", __FILE__)
 FileUtils.rm_rf(report_path)
