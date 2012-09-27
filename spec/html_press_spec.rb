@@ -2,14 +2,13 @@
 
 require File.expand_path("../lib/html_press", File.dirname(__FILE__))
 
-# TODO: use standard Logger
-class Lg
-  class << self
-    @warns = [] 
-    attr_accessor :warns
-    def log text
-      Lg.warns.push text
-    end
+class LoggerStub
+  attr_accessor :errors
+  def initialize
+    @errors = []
+  end
+  def error text
+    @errors.push text
   end
 end
 
@@ -150,17 +149,17 @@ describe HtmlPress do
 
   it "should report javascript errors" do
     ["<script>function(){</script>", "<a onclick=\"return false\"></a>"].each do |script_with_error|
-      Lg.warns = []
-      HtmlPress.press(script_with_error, {:logger => Lg.method(:log)}).should eql script_with_error
-      Lg.warns.size.should eql 1
+      log = LoggerStub.new
+      HtmlPress.press(script_with_error, {:logger => log}).should eql script_with_error
+      log.errors.size.should eql 1
     end
   end
 
   it "should report css errors" do
     ["<style>.clas{margin:</style>", "<a style=\"#asd\">link</a>"].each do |style_with_error|
-      Lg.warns = []
-      HtmlPress.press(style_with_error, {:logger => Lg.method(:log)}).should eql style_with_error
-      Lg.warns.size.should eql 1
+      log = LoggerStub.new
+      HtmlPress.press(style_with_error, {:logger => log}).should eql style_with_error
+      log.errors.size.should eql 1
     end
   end
 

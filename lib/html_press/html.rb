@@ -14,6 +14,9 @@ module HtmlPress
         @options[:drop_empty_values] = @options.delete(:dump_empty_values)
         warn "dump_empty_values deprecated use drop_empty_values"
       end
+      if @options[:logger] && !@options[:logger].respond_to?(:error)
+        raise ArgumentError, 'Logger has no error method'
+      end
     end
 
     def press (html)
@@ -166,12 +169,10 @@ module HtmlPress
     end
 
     def log (text)
-      if @options[:logger] && @options[:logger].respond_to?(:call)
-        @options[:logger].call text
-      end
+      @options[:logger].error text if @options[:logger]
     end
 
-    def reserve(content)
+    def reserve (content)
       @placeholders.push content
       '%' + @replacement_hash + '%' + (@placeholders.size - 1).to_s + '%'
     end
