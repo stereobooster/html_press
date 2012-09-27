@@ -22,7 +22,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rspec"
   s.add_development_dependency "rake"
-  s.add_development_dependency "ruby-prof"
   
   s.add_runtime_dependency "css_press", ">=0.3.2"
   s.add_runtime_dependency "uglifier"
