@@ -2,6 +2,7 @@
 
 require File.expand_path("../lib/html_press", File.dirname(__FILE__))
 
+# TODO: use standard Logger
 class Lg
   class << self
     @warns = [] 

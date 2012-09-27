@@ -39,6 +39,9 @@ TODO :exclamation:
   - Support other js/css minifiers (Closure, YUI compressor)
   - htmlTydi
   - Rack plugin
+  - add script to benchmark real projects like amazon or stackoverflow
+  - support html5 tags
+  - add more options
 
 ## Alternatives
   - [html-minifier](https://github.com/kangax/html-minifier) (js), [test suite](https://github.com/kangax/html-minifier/blob/gh-pages/tests/index.html), ruby wrapper - [html_minifier](https://github.com/stereobooster/html_minifier)

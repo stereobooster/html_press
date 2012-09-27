@@ -4,7 +4,8 @@ module HtmlPress
     DEFAULTS = {
       :logger => false,
       :unquoted_attributes => false,
-      :drop_empty_values => false 
+      :drop_empty_values => false,
+      :strip_crlf => false
     }
 
     def initialize (options = {})
@@ -15,31 +16,53 @@ module HtmlPress
       end
     end
 
-    def log (text)
-      if @options[:logger] && @options[:logger].respond_to?(:call)
-        @options[:logger].call text
-      end
-    end
-
     def press (html)
-
       out = html.respond_to?(:read) ? html.read : html.dup
 
       @replacement_hash = 'MINIFYHTML' + Time.now.to_i.to_s
       @placeholders = []
-      @strip_crlf = false
 
-      # IE conditional comments
-      out.gsub! /\s*(<!--\[[^\]]+\]>[\s\S]*?<!\[[^\]]+\]-->)\s*/ do |m|
+      out = process_ie_conditional_comments out
+      out = process_scripts out
+      out = process_styles out
+      out = process_html_comments out
+      out = process_pres out
+
+      out = HtmlPress.entities_compressor out
+
+      out = trim_lines out
+      out = process_block_elements out
+      out = process_textareas out
+
+      # use newlines before 1st attribute in open tags (to limit line lengths)
+      # out.gsub!(/(<[a-z\-:]+)\s+([^>]+>)/i, "\\1\n\\2")
+
+      out = process_attributes out
+      out = process_whitespaces out
+      out = fill_placeholders out
+
+      out
+    end
+
+    # for backward compatibility
+    alias :compile :press
+
+    protected
+
+    # IE conditional comments
+    def process_ie_conditional_comments (out)
+      out.gsub /\s*(<!--\[[^\]]+\]>[\s\S]*?<!\[[^\]]+\]-->)\s*/ do |m|
         m.gsub!(/^\s+|\s+$/, '')
         comment = m.gsub(/\s*<!--\[[^\]]+\]>([\s\S]*?)<!\[[^\]]+\]-->\s*/, "\\1")
-        comment_compressed = Html.new.compile(comment)
+        comment_compressed = Html.new.press(comment)
         m.gsub!(comment, comment_compressed)
         reserve m
       end
+    end
 
-      # replace SCRIPTs (and minify) with placeholders
-      out.gsub! /\s*(<script\b[^>]*?>[\s\S]*?<\/script>)\s*/i do |m|
+    # replace SCRIPTs (and minify) with placeholders
+    def process_scripts (out)
+      out.gsub /\s*(<script\b[^>]*?>[\s\S]*?<\/script>)\s*/i do |m|
         m.gsub!(/^\s+|\s+$/, '')
         m = m.gsub /^<script\s([^>]+)>/i do |m|
           attrs(m, 'script', true)
@@ -53,9 +76,11 @@ module HtmlPress
         end
         reserve m
       end
+    end
 
-      # replace STYLEs (and minify) with placeholders
-      out.gsub! /\s*(<style\b[^>]*?>[\s\S]*?<\/style>)\s*/i do |m|
+    # replace STYLEs (and minify) with placeholders
+    def process_styles (out)
+      out.gsub /\s*(<style\b[^>]*?>[\s\S]*?<\/style>)\s*/i do |m|
         m.gsub!(/^\s+|\s+$/, '')
         m = m.gsub /^<style\s([^>]+)>/i do |m|
           attrs(m, 'style', true)
@@ -69,31 +94,31 @@ module HtmlPress
         end
         reserve m
       end
+    end
 
-      # remove out comments (not containing IE conditional comments).
-      out.gsub! /<!--([\s\S]*?)-->/ do |m|
-        ''
-      end
+    # remove html comments (not IE conditional comments)
+    def process_html_comments (out)
+      out.gsub /<!--([\s\S]*?)-->/, ''
+    end
 
-      # replace PREs with placeholders
-      out.gsub! /\s*(<pre\b[^>]*?>[\s\S]*?<\/pre>)\s*/i do |m|
+    # replace PREs with placeholders
+    def process_pres (out)
+      out.gsub /\s*(<pre\b[^>]*?>[\s\S]*?<\/pre>)\s*/i do |m|
         pre = m.gsub(/\s*<pre\b[^>]*?>([\s\S]*?)<\/pre>\s*/i, "\\1")
         pre_compressed = pre.gsub(/\s+$/, '')
         pre_compressed = HtmlPress.entities_compressor pre_compressed
         m.gsub!(pre, pre_compressed)
         reserve m
       end
+    end
 
-      out = HtmlPress.entities_compressor out
+    # trim each line
+    def trim_lines (out)
+      out.gsub(/^\s+|\s+$/m, '')
+    end
 
-      # replace TEXTAREAs with placeholders
-      out.gsub! /\s*(<textarea\b[^>]*?>[\s\S]*?<\/textarea>)\s*/i do |m|
-        reserve m
-      end
-
-      # trim each line.
-      out.gsub!(/^\s+|\s+$/m, '')
-
+    # remove whitespaces outside of block elements
+    def process_block_elements (out)
       re = '\\s+(<\\/?(?:area|base(?:font)?|blockquote|body' +
         '|caption|center|cite|col(?:group)?|dd|dir|div|dl|dt|fieldset|form' +
         '|frame(?:set)?|h[1-6]|head|hr|html|legend|li|link|map|menu|meta' +
@@ -103,31 +128,48 @@ module HtmlPress
       re = Regexp.new(re)
       out.gsub!(re, '\\1')
 
-      # remove ws outside of all elements
+      # remove whitespaces outside of all elements
       out.gsub! />([^<]+)</ do |m|
         m.gsub(/^\s+|\s+$/, ' ')
       end
 
-      # use newlines before 1st attribute in open tags (to limit line lengths)
-      # out.gsub!(/(<[a-z\-:]+)\s+([^>]+>)/i, "\\1\n\\2")
+      out
+    end
 
-      # match attributes
-      out.gsub! /<[a-z\-:]+\s([^>]+)>/i do |m|
+    # replace TEXTAREAs with placeholders
+    def process_textareas (out)
+      out.gsub /\s*(<textarea\b[^>]*?>[\s\S]*?<\/textarea>)\s*/i do |m|
+        reserve m
+      end
+    end
+
+    # attributes
+    def process_attributes (out)
+      out.gsub /<[a-z\-:]+\s([^>]+)>/i do |m|
         reserve attrs(m, '[a-z\-:]+', true)
       end
+    end
 
-      out.gsub!(/[\r\n]+/, @strip_crlf ? ' ' : "\n")
-
+    # replace two or more whitespaces with one
+    def process_whitespaces (out)
+      out.gsub!(/[\r\n]+/, @options[:strip_crlf] ? ' ' : "\n")
       out.gsub!(/\s+/, ' ')
+      out
+    end
 
-      # fill placeholders
+    # fill placeholders
+    def fill_placeholders (out)
       re = Regexp.new('%' + @replacement_hash + '%(\d+)%')
-      out.gsub! re do |m|
+      out.gsub re do |m|
         m.gsub!(re, "\\1")
         @placeholders[m.to_i]
       end
+    end
 
-      out
+    def log (text)
+      if @options[:logger] && @options[:logger].respond_to?(:call)
+        @options[:logger].call text
+      end
     end
 
     def reserve(content)
@@ -277,9 +319,6 @@ module HtmlPress
 
       attribute
     end
-
-    # for backward compatibility
-    alias :compile :press
 
   end
 end
