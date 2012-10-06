@@ -1,11 +1,14 @@
 module HtmlPress
   begin
     require 'uglifier'
-    def self.js_compressor (text)
-      Uglifier.new.compile(text).gsub(/;$/,'')
+    # Available options https://github.com/lautis/uglifier#options
+    def self.js_compressor (text, options = nil)
+      options ||= {}
+      options[:inline_script] = true
+      Uglifier.new(options).compile(text).gsub(/;$/,'')
     end
   rescue LoadError => e
-    def self.js_compressor (text)
+    def self.js_compressor (text, options = nil)
       text
     end
   end

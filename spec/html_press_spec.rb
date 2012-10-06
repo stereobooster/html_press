@@ -44,6 +44,9 @@ describe HtmlPress do
     pressed_script = "<script>" + HtmlPress.js_compressor(script) + "</script>"
     script = "  <script>" + script + "</script>  "
     HtmlPress.press(script).should eql pressed_script
+
+    script = %q{<script>window.jQuery||document.write('<script src="/components/jquery/jquery.js"><\/script>')</script>}
+    HtmlPress.press(script).should eql script
   end
 
   it "should compress css in style tags" do

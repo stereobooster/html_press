@@ -5,7 +5,8 @@ module HtmlPress
       :logger => false,
       :unquoted_attributes => false,
       :drop_empty_values => false,
-      :strip_crlf => false
+      :strip_crlf => false,
+      :js_minifier_options => false
     }
 
     def initialize (options = {})
@@ -71,7 +72,7 @@ module HtmlPress
           attrs(m, 'script', true)
         end
         begin
-          js_compressed = HtmlPress.js_compressor js
+          js_compressed = HtmlPress.js_compressor js, @options[:js_minifier_options]
           m.gsub!(js, js_compressed)
         rescue Exception => e
           log e.message
@@ -292,7 +293,7 @@ module HtmlPress
         if events.include? name
           value_original.gsub! /^javascript:\s+|;$/, ''
           begin
-            value_original = HtmlPress.js_compressor value_original
+            value_original = HtmlPress.js_compressor value_original, @options[:js_minifier_options]
             # TODO what about escaped attribute values?
             if delimiter == "\""
               value_original.gsub! "\"", "'"
