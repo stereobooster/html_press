@@ -31,7 +31,8 @@ describe HtmlPress do
 
   it "should leave newlines in pre tags and remove trailing spaces" do
     HtmlPress.press("<pre>a \t </pre>").should eql "<pre>a</pre>"
-    HtmlPress.press("<pre>qwe   \nasd   </pre>").should eql "<pre>qwe\nasd</pre>"
+    HtmlPress.press("<pre>qwe   \r\nasd   </pre>").should eql "<pre>qwe\nasd</pre>"
+    HtmlPress.press("<pre>   qwe   \n\r\n   asd   </pre>").should eql "<pre>   qwe\n\n   asd</pre>"
   end
 
   it "should leave textareas as is" do

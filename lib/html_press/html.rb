@@ -108,7 +108,7 @@ module HtmlPress
       out.gsub /(<pre\b[^>]*?>([\s\S]*?)<\/pre>)\s*/i do
         pre = $2
         m = $1
-        pre_compressed = pre.gsub(/\s+$/, '')
+        pre_compressed = pre.lines.map{ |l| l.gsub(/\s+$/, '') }.join("\n")
         pre_compressed = HtmlPress.entities_compressor pre_compressed
         m.gsub!(pre, pre_compressed)
         reserve m
