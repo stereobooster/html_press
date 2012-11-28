@@ -52,7 +52,7 @@ describe HtmlPress do
 
   it "should compress css in style tags" do
     style = "  div { margin: 0px 0px; \n}  "
-    pressed_style = "<style>" + HtmlPress.style_compressor(style) + "</style>"
+    pressed_style = "<style>" + MultiCss.min(style) + "</style>"
     style = "  <style>" + style + "</style>  "
     HtmlPress.press(style).should eql pressed_style
   end

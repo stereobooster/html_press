@@ -89,7 +89,7 @@ module HtmlPress
           attrs(m, 'style', true)
         end
         begin
-          css_compressed = HtmlPress.style_compressor css
+          css_compressed = MultiCss.min css
           m.gsub!(css, css_compressed)
         rescue Exception => e
           log e.message
@@ -269,14 +269,14 @@ module HtmlPress
 
         if name == "style"
           begin
-            value_original = HtmlPress.css_compressor value_original
+            value_original = MultiCss.min_attr value_original
             # TODO what about escaped attribute values?
             if delimiter == "\""
               value_original.gsub!("\"", "'")
             else
               value_original.gsub!("'", "\"")
             end
-          rescue Exception => e
+          rescue MultiCss::ParseError => e
             log e.message
           end
         end

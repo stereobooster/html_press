@@ -10,20 +10,17 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/stereobooster/html_press"
   s.summary     = %q{Compress html}
   s.description = %q{Ruby gem for compressing html}
-
-  s.rubyforge_project = "html_press"
+  s.license     = "MIT"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  # s.add_dependency "nokogiri"
-
   s.add_development_dependency "rspec"
   s.add_development_dependency "rake"
   
-  s.add_runtime_dependency "css_press", ">=0.3.2"
-  s.add_runtime_dependency "uglifier"
-  s.add_runtime_dependency "htmlentities"
+  s.add_dependency "multi_css", ">= 0.1.0"
+  s.add_dependency "uglifier"
+  s.add_dependency "htmlentities"
 end
