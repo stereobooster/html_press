@@ -81,11 +81,18 @@ describe HtmlPress do
     HtmlPress.press(text).should eql text2
   end
 
-  # TODO concatenate adjacent script tags
   it "should remove whitespaces between script tags" do
     text = "<p></p>  <script>var a</script> \t <script>var b</script>"
     text2 = "<p></p> <script>var a</script><script>var b</script>"
     HtmlPress.press(text).should eql text2
+  end
+
+  it "should concatenate adjacent script tags" do
+    pending "Not implemented yet" do
+      text = "<p></p>  <script>var a</script> \t <script>function b(){}</script>"
+      text2 = "<p></p> <script>var a;function b(){}</script>"
+      HtmlPress.press(text).should eql text2
+    end
   end
 
   it "should treat text inside IE conditional comments as it was without comments" do
@@ -132,12 +139,13 @@ describe HtmlPress do
     HtmlPress.press(text).should eql text
   end
 
-  # TODO
-  # it "should compress namespaces" do
-  #   text = "<html xmlns:og=\"http://ogp.me/ns#\" class=\"a b\"><og:like>like</og:like></html>"
-  #   text1 = "<html xmlns:a=\"http://ogp.me/ns#\" class=\"a b\"><a:like>like</a:like></html>"
-  #   HtmlPress.press(text).should eql text1
-  # end
+  it "should compress namespaces" do
+    pending "Not implemented yet" do
+      text = "<html xmlns:og=\"http://ogp.me/ns#\" class=\"a b\"><og:like>like</og:like></html>"
+      text1 = "<html xmlns:a=\"http://ogp.me/ns#\" class=\"a b\"><a:like>like</a:like></html>"
+      HtmlPress.press(text).should eql text1
+    end
+  end
 
   it "should not modify input value" do
     text = "<div>   </div>"
@@ -175,15 +183,17 @@ describe HtmlPress do
     HtmlPress.press("<input disabled=\"disabled\"/>").should eql "<input disabled/>"
     # readonly            (input type=text/password, textarea)
     HtmlPress.press("<input readonly=\"readonly\"/>").should eql "<input readonly/>"
-    # HtmlPress.press("<script src=\"example.com\" async=\"async\"></script>").should eql "<script src=\"example.com\" async></script>"
-    # HtmlPress.press("<script src=\"example.com\" defer=\"defer\"></script>").should eql "<script src=\"example.com\" async></script>"
-    # HtmlPress.press("<select multiple=\"multiple\"/>").should eql "<select multiple/>"
-    # ismap     isMap     (img, input type=image)
-    # declare             (object; never used)
-    # noresize  noResize  (frame)
-    # nowrap    noWrap    (td, th; deprecated)
-    # noshade   noShade   (hr; deprecated)
-    # compact             (ul, ol, dl, menu, dir; deprecated)
+    pending "Not implemented yet" do
+      HtmlPress.press("<script src=\"example.com\" async=\"async\"></script>").should eql "<script src=\"example.com\" async></script>"
+      HtmlPress.press("<script src=\"example.com\" defer=\"defer\"></script>").should eql "<script src=\"example.com\" defer></script>"
+      HtmlPress.press("<select multiple=\"multiple\"/>").should eql "<select multiple/>"
+      # ismap     isMap     (img, input type=image)
+      # declare             (object; never used)
+      # noresize  noResize  (frame)
+      # nowrap    noWrap    (td, th; deprecated)
+      # noshade   noShade   (hr; deprecated)
+      # compact             (ul, ol, dl, menu, dir; deprecated)
+    end
   end
 
   it "should remove attributes with default values" do
@@ -235,9 +245,8 @@ describe HtmlPress do
     end
   end
 
-  # TODO
-  # it "should concatenate adjecent style tags" do
-  #   all stylle tags can be collected, concatneated and placed in header
-  # end
-
+  it "should concatenate adjecent style tags" do
+    pending "Not implemented yet"
+    # all stylle tags can be collected, concatneated and placed in header
+  end
 end
