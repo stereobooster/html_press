@@ -74,7 +74,7 @@ module HtmlPress
         begin
           js_compressed = HtmlPress.js_compressor js, @options[:js_minifier_options]
           m.gsub!(js, js_compressed)
-        rescue Exception => e
+        rescue MultiJs::ParseError => e
           log e.message
         end
         reserve m
@@ -298,7 +298,7 @@ module HtmlPress
             if delimiter == "\""
               value_original.gsub! "\"", "'"
             end
-          rescue Exception => e
+          rescue MultiJs::ParseError => e
             log e.message
           end
         end

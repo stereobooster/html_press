@@ -1,8 +1,6 @@
-#html_press
+# HtmlPress [![Build Status](https://secure.travis-ci.org/stereobooster/html_press.png?branch=master)](https://secure.travis-ci.org/#!/stereobooster/html_press) [![Dependency Status](https://gemnasium.com/stereobooster/html_press.png?travis)](https://gemnasium.com/stereobooster/html_press) [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/stereobooster/html_press)
 
-[![Build Status](https://secure.travis-ci.org/stereobooster/html_press.png?branch=master)](http://travis-ci.org/stereobooster/html_press)
-
-## how it works
+## How it works
 
 Remove all whitespace junk. Leave only HTML
 

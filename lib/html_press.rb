@@ -1,9 +1,9 @@
 require "html_press/version"
-require "html_press/uglifier"
 require "html_press/html_entities"
 require "html_press/html"
 
 require 'multi_css'
+require 'multi_js'
 
 module HtmlPress
   def self.press(text, options = {})
@@ -15,4 +15,9 @@ module HtmlPress
     HtmlPress::Html.new(options).press text
   end
 
+  def self.js_compressor (text, options = nil)
+    options ||= {}
+    options[:inline_script] = true
+    MultiJs.compile(text, options).gsub(/;$/,'')
+  end
 end
