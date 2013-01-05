@@ -214,7 +214,7 @@ module HtmlPress
 
     def attr(attribute, delimiter, tag)
       re = "([a-z\\-_:]+)(=" + delimiter + "[^" + delimiter + "]*" + delimiter + ")?"
-      re = Regexp.new re
+      re = Regexp.new re, true
       value_original = attribute.gsub(re, "\\2")
       value = value_original.downcase
       name_original = attribute.gsub(re, "\\1")

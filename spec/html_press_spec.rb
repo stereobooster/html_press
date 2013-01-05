@@ -121,6 +121,11 @@ describe HtmlPress do
     # HtmlPress.press("<p class = a></p>").should eql "<p class=a></p>"
   end
 
+  it "should work with different case attributes" do
+    text = '<embed allowFullScreen="true" allowScriptAccess="always"/>'
+    HtmlPress.press(text).should eql text
+  end
+
   it "should optimize attributes" do
     HtmlPress.press("<p class=\"a  b\"></p>").should eql "<p class=\"a b\"></p>"
     # TODO http(s):// to //
