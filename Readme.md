@@ -1,4 +1,4 @@
-# HtmlPress [![Build Status](https://travis-ci.org/stereobooster/html_press.png?branch=master)](https://travis-ci.org/stereobooster/html_press) [![Dependency Status](https://gemnasium.com/stereobooster/html_press.png?travis)](https://gemnasium.com/stereobooster/html_press) [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/stereobooster/html_press)
+# HtmlPress ![Gem Version](https://fury-badge.herokuapp.com/rb/html_press.png) [![Build Status](https://travis-ci.org/stereobooster/html_press.png?branch=master)](https://travis-ci.org/stereobooster/html_press) [![Dependency Status](https://gemnasium.com/stereobooster/html_press.png?travis)](https://gemnasium.com/stereobooster/html_press) [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/stereobooster/html_press)
 
 ## How it works
 
