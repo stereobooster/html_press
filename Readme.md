@@ -40,6 +40,7 @@ TODO :exclamation:
   - add script to benchmark real projects like amazon or stackoverflow
   - support html5 tags
   - add more options
+  - Optimization: make substring replace based on substring length and its position in initial string
 
 ## Alternatives
   - [html-minifier](https://github.com/kangax/html-minifier) (js), [test suite](https://github.com/kangax/html-minifier/blob/gh-pages/tests/index.html), ruby wrapper - [html_minifier](https://github.com/stereobooster/html_minifier)
@@ -51,6 +52,7 @@ TODO :exclamation:
   - [jeanny](https://github.com/gfranco/jeanny) - rename css classes and ids in css and html files
     - make shorter pathes for images in css
   - [deadweight](https://github.com/aanand/deadweight) - remove unused css rules from css files
+  - [csscss](http://zmoazeni.github.com/csscss/) will parse any CSS files you give it and let you know which rulesets have duplicated declarations.
   - [css-spriter](https://github.com/aberant/css-spriter), [sprite-factory](https://github.com/jakesgordon/sprite-factory) - combine images in sprites
   - resize images by size defined in html and vice versa embed size of images in html
   - [#1](http://habrahabr.ru/post/90761/), [#2](http://ap-project.org/English/Article/View/53/) - inline small images in css
