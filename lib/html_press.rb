@@ -15,8 +15,7 @@ module HtmlPress
     HtmlPress::Html.new(options).press text
   end
 
-  def self.js_compressor (text, options = nil)
-    options ||= {}
+  def self.js_compressor (text, options = {})
     MultiJs.compile(text, options).gsub(/;$/,'')
   end
 end
