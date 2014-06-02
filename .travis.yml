@@ -7,3 +7,6 @@ rvm:
   - rbx-18mode
 # - jruby-19mode
 # - rbx-19mode
+
+before_install:
+  - export NOKOGIRI_USE_SYSTEM_LIBRARIES=true
