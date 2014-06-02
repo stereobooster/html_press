@@ -1,3 +1,5 @@
+require 'nokogiri'
+
 module HtmlPress
   class Html
 
@@ -187,18 +189,18 @@ module HtmlPress
       else
         tag = tag_name
       end
-      
+
       if attributes.size > 0
         attributes_compressed = attributes.gsub(/([a-z\-_:]+(="[^"]*")?(='[^']*')?)\s*/i, " \\1")
-  
+
         attributes_compressed.gsub! /([a-z\-_:]+="[^"]*")/i do |k|
           attr k, "\"", tag
         end
-  
+
         attributes_compressed.gsub! /([a-z\-_:]+='[^']*')/i do |k|
           attr k, "'", tag
         end
-  
+
         attributes_compressed = " " + attributes_compressed.strip
 
         if attributes_compressed == " /"
