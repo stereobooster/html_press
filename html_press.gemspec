@@ -19,8 +19,9 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rspec"
   s.add_development_dependency "rake"
-  
+
   s.add_dependency "multi_css", ">= 0.1.0"
   s.add_dependency "multi_js", ">= 0.1.0"
   s.add_dependency "htmlentities"
+  s.add_dependency "nokogiri"
 end
