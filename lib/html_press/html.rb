@@ -6,7 +6,8 @@ module HtmlPress
       :unquoted_attributes => false,
       :drop_empty_values => false,
       :strip_crlf => false,
-      :js_minifier_options => false
+      :js_minifier_options => false,
+      :compress_entities => true
     }
 
     def initialize (options = {})
@@ -32,7 +33,7 @@ module HtmlPress
       out = process_html_comments out
       out = process_pres out
 
-      out = HtmlPress.entities_compressor out
+      out = HtmlPress.entities_compressor out if @options[:compress_entities]
 
       out = trim_lines out
       out = process_block_elements out
