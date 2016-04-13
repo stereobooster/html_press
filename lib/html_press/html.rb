@@ -253,9 +253,6 @@ module HtmlPress
           return name_original
         end
         if tag_name == "input"
-          if name == "type" && value_original == "text"
-            return ""
-          end
           if name == "checked"
             return name_original
           end
